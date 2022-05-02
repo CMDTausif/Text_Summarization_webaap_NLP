@@ -1,0 +1,5 @@
+spacy
+Flask
+string
+heapq
+gunicorn
