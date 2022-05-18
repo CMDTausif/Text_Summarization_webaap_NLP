@@ -8,7 +8,7 @@
 4. Heapq
 
 ### Web app link-
-link-  under construction...nedd to be wait for sometime..
+link-  under construction...need to be wait for sometime..
 
 
 
