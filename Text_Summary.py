@@ -24,43 +24,67 @@ In January 2021, it was announced that series six would be the last, followed by
 # doc = nlp(text)
 # print(doc)
 
+# making a summarizer function and taking a variable named rawdocs
 def summarizer(rawdocs):
-    stopwords = list(STOP_WORDS)
+    stopwords = list(STOP_WORDS) # saving the stopwords in a list
+    # loading the en_core_web_sm module
     nlp = spacy.load('en_core_web_sm')
+    # saving it in doc variable
     doc = nlp(rawdocs)
+    """
+    for token in doc = getting every word, punctuation from every doc and then saving it as token into token.text
+    and then saving it in a list.
+    """
     tokens = [token.text for token in doc]
 
+    """
+    making a dictionary know as word_freq, it would save corresponding frequency of every word
+    """
     word_freq = {}
 
     for word in doc:
+        # only taking those words which are not presented in stopwords and punctuations 
+        # means eliminating stopwords and punctuations words and taking the rest of the words
         if word.text.lower() not in stopwords and word.text.lower() not in punctuation:
+            # converting word in to text and checking is it in word_freq dictionary or not
             if word.text not in word_freq.keys():
                 word_freq[word.text] = 1
             else:
                 word_freq[word.text] += 1
 
+    # getting the maximum word frequency of a word
     max_freq = max(word_freq.values())
 
     for word in word_freq.keys():
+        # getting normalize freq of every word..while deviding the word_freq by max-freq
+        # normalize_freq is the unit freq
         word_freq[word] = word_freq[word] / max_freq
 
+    # picking every sentence and saving is as tokens in sent_tokens list
     sent_tokens = [sent for sent in doc.sents]
 
+    # dictionary for scores of each  sentence tokens
     sent_scores = {}
+    # picking every sentence in sent_token list
     for sent in sent_tokens:
+        # then getting every word from every sentence
         for word in sent:
+            # checking in word_freq dictionary that the word is present or not
             if word.text in word_freq.keys():
                 if sent not in sent_scores.keys():
                     sent_scores[sent] = word_freq[word.text]
-                    # sent is beign stored in sent_scores and the corresponding frequency is beign saved
+                    # sent is beign stored in sent_scores and the corresponding frequency(word_freq)of sentence is beign saved
                 else:
                     sent_scores[sent] += word_freq[word.text]
 
-    select_len = int(len(sent_tokens) * 0.3)
-
+    select_len = int(len(sent_tokens) * 0.3) # taking 30 percent(0.3) of sent_tokens and then converting into integer and saving 
+    # it to select_len
+    
+    # geeting highest frequency of sentence and then it would store into summary
     summary = nlargest(select_len, sent_scores, key=sent_scores.get)
     # print(summary)
 
+    # converting the listed summary into word.text and joining space with every word 
     final_summary = [word.text for word in summary]
     summary = " ".join(final_summary)
 
